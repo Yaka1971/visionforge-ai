@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/select";
 import { Sparkles, Download, Share2, Zap, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
 
 const STYLES = [
   "Ultra-Realistic",
@@ -64,9 +65,11 @@ export default function TextToImage() {
 
       if (result.generation.imageUrl) {
         setGeneratedImage(result.generation.imageUrl);
+        toast.success("Image generated successfully!");
       }
     } catch (error) {
       console.error("Generation failed:", error);
+      toast.error("Failed to generate image. Please try again.");
     }
   };
 
@@ -287,6 +290,7 @@ export default function TextToImage() {
                       link.href = generatedImage;
                       link.download = "visionforge-image.png";
                       link.click();
+                      toast.success("Image downloaded!");
                     }}
                   >
                     <Download size={18} className="mr-2" />
@@ -297,6 +301,7 @@ export default function TextToImage() {
                     className="flex-1 border-slate-700"
                     onClick={() => {
                       navigator.clipboard.writeText(generatedImage);
+                      toast.success("Image URL copied to clipboard!");
                     }}
                   >
                     <Share2 size={18} className="mr-2" />

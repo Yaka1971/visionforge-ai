@@ -63,6 +63,13 @@ export default function Home() {
                   Prompt Builder
                 </Button>
                 <Button
+                  onClick={() => setLocation("/image-to-video")}
+                  variant="outline"
+                  className="border-slate-700"
+                >
+                  Image to Video
+                </Button>
+                <Button
                   onClick={() => setLocation("/gallery")}
                   variant="outline"
                   className="border-slate-700"

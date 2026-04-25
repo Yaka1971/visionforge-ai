@@ -40,18 +40,18 @@
 - [ ] Implement prompt template save/load functionality
 
 ### Frontend - Image-to-Video
-- [ ] Create ImageToVideo page component
-- [ ] Implement image upload/selection from gallery
-- [ ] Implement camera motion controls (zoom, pan, dolly, slow motion)
-- [ ] Implement motion intensity slider
-- [ ] Implement video preview
-- [ ] Implement video export options
+- [x] Create ImageToVideo page component
+- [x] Implement image upload/selection from gallery
+- [x] Implement camera motion controls (zoom, pan, dolly, slow motion)
+- [x] Implement motion intensity slider
+- [x] Implement video preview
+- [x] Implement video export options
 
 ### Frontend - Video Enhancement
-- [ ] Create VideoEnhancement component
-- [ ] Implement light effects selector (beam bursts, glow, fire, smoke)
-- [ ] Implement scene transitions selector (fade, flash, glitch, cinematic cut)
-- [ ] Implement export quality selector (HD, 4K)
+- [x] Create VideoEnhancement component (integrated in ImageToVideo)
+- [x] Implement light effects selector (beam bursts, glow, fire, smoke)
+- [x] Implement scene transitions selector (fade, flash, glitch, cinematic cut)
+- [x] Implement export quality selector (HD, 4K)
 
 ### Frontend - Gallery
 - [x] Create Gallery page component
@@ -63,8 +63,8 @@
 - [x] Implement pagination or infinite scroll
 
 ### Frontend - Export
-- [ ] Implement PNG export for images
-- [ ] Implement JPG export for images
+- [x] Implement PNG export for images
+- [x] Implement JPG export for images
 - [ ] Implement MP4 export for videos
 - [ ] Implement social media format optimization (TikTok, YouTube, Instagram)
 - [ ] Implement batch export
@@ -72,11 +72,11 @@
 ### Frontend - UI/UX
 - [x] Create dark-themed cinematic layout
 - [x] Implement smooth animations and transitions
-- [ ] Implement drag-and-drop interface for file uploads
+- [x] Implement drag-and-drop interface for file uploads
 - [x] Implement responsive design for mobile/tablet
 - [x] Create navigation structure (Text-to-Image, Prompt Builder, Image-to-Video, Gallery, Settings)
 - [x] Implement loading states and error handling
-- [ ] Implement toast notifications for user feedback
+- [x] Implement toast notifications for user feedback
 
 ### Authentication & User Management
 - [x] Verify Manus OAuth integration

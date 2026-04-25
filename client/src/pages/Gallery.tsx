@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Download, Trash2, Image as ImageIcon } from "lucide-react";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
 
 export default function Gallery() {
   const { user } = useAuth();
@@ -34,8 +35,10 @@ export default function Gallery() {
     try {
       await deleteMutation.mutateAsync({ id });
       setAllGenerations((prev) => prev.filter((item) => item.generationId !== id));
+      toast.success("Image deleted successfully!");
     } catch (error) {
       console.error("Delete failed:", error);
+      toast.error("Failed to delete image.");
     }
   };
 
@@ -44,6 +47,7 @@ export default function Gallery() {
     link.href = url;
     link.download = filename;
     link.click();
+    toast.success("Download started!");
   };
 
   return (
