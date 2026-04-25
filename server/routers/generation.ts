@@ -14,7 +14,7 @@ import {
   generatePromptSuggestions,
 } from "../services/aiService";
 import { storagePut } from "../storage";
-import { createMP4Buffer } from "../services/videoService";
+import { generateVideoWithFFmpeg } from "../services/videoGeneration";
 
 export const generationRouter = router({
   /**
@@ -132,8 +132,8 @@ export const generationRouter = router({
       }
 
       try {
-        // Create a valid MP4 file with proper structure
-        const videoBuffer = createMP4Buffer({
+        // Generate real video with actual frames
+        const { videoUrl, videoKey } = await generateVideoWithFFmpeg({
           imageUrl: input.imageUrl,
           sceneDescription: input.sceneDescription,
           cameraMotion: input.cameraMotion,
@@ -141,21 +141,15 @@ export const generationRouter = router({
           effects: input.effects,
           transitions: input.transitions,
           exportQuality: input.exportQuality,
+          userId,
         });
-
-        // Store video using the storage service
-        const { url: videoUrl } = await storagePut(
-          `videos/${userId}/${generation.id}.mp4`,
-          videoBuffer,
-          "video/mp4"
-        );
 
         // Create gallery item
         await createGalleryItem({
           userId,
           generationId: generation.id,
           type: "video",
-          fileKey: `videos/${userId}/${generation.id}.mp4`,
+          fileKey: videoKey,
           fileUrl: videoUrl,
           metadata: JSON.stringify({
             cameraMotion: input.cameraMotion,
