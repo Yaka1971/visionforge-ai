@@ -1,6 +1,6 @@
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
+import { InsertUser, users, generations, InsertGeneration, Generation, galleryItems, InsertGalleryItem, GalleryItem } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -89,4 +89,71 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
-// TODO: add feature queries here as your schema grows.
+export async function getUserGenerations(userId: number, limit = 20, offset = 0) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(generations)
+    .where(eq(generations.userId, userId))
+    .orderBy(desc(generations.createdAt))
+    .limit(limit)
+    .offset(offset);
+}
+
+export async function getUserGalleryItems(userId: number, limit = 20, offset = 0) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(galleryItems)
+    .where(eq(galleryItems.userId, userId))
+    .orderBy(desc(galleryItems.createdAt))
+    .limit(limit)
+    .offset(offset);
+}
+
+export async function createGeneration(data: InsertGeneration): Promise<Generation | null> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.insert(generations).values(data);
+  if (result[0].insertId) {
+    const created = await db.select().from(generations).where(eq(generations.id, result[0].insertId as number)).limit(1);
+    return created[0] || null;
+  }
+  return null;
+}
+
+export async function createGalleryItem(data: InsertGalleryItem): Promise<GalleryItem | null> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.insert(galleryItems).values(data);
+  if (result[0].insertId) {
+    const created = await db.select().from(galleryItems).where(eq(galleryItems.id, result[0].insertId as number)).limit(1);
+    return created[0] || null;
+  }
+  return null;
+}
+
+export async function deleteGalleryItem(id: number, userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  return await db
+    .delete(galleryItems)
+    .where(eq(galleryItems.id, id) && eq(galleryItems.userId, userId));
+}
+
+export async function getGenerationById(id: number, userId: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const result = await db.select().from(generations).where(eq(generations.id, id) && eq(generations.userId, userId)).limit(1);
+  return result[0] || null;
+}
+
+// TODO: add additional feature queries here as your schema grows.

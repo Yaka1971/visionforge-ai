@@ -25,4 +25,39 @@ export const users = mysqlTable("users", {
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
-// TODO: Add your tables here
+export const generations = mysqlTable("generations", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  type: mysqlEnum("type", ["image", "video"]).notNull(),
+  prompt: text("prompt").notNull(),
+  negativePrompt: text("negativePrompt"),
+  style: varchar("style", { length: 64 }),
+  aspectRatio: varchar("aspectRatio", { length: 16 }),
+  imageUrl: text("imageUrl"),
+  imageFileKey: varchar("imageFileKey", { length: 255 }),
+  videoUrl: text("videoUrl"),
+  videoFileKey: varchar("videoFileKey", { length: 255 }),
+  metadata: text("metadata"),
+  status: mysqlEnum("status", ["pending", "processing", "completed", "failed"]).default("pending").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Generation = typeof generations.$inferSelect;
+export type InsertGeneration = typeof generations.$inferInsert;
+
+export const galleryItems = mysqlTable("galleryItems", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  generationId: int("generationId").notNull(),
+  type: mysqlEnum("type", ["image", "video"]).notNull(),
+  fileKey: varchar("fileKey", { length: 255 }).notNull(),
+  fileUrl: text("fileUrl").notNull(),
+  thumbnail: text("thumbnail"),
+  metadata: text("metadata"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type GalleryItem = typeof galleryItems.$inferSelect;
+export type InsertGalleryItem = typeof galleryItems.$inferInsert;
