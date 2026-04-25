@@ -100,7 +100,7 @@ export const generationRouter = router({
     .input(
       z.object({
         imageUrl: z.string().min(1),
-        sceneDescription: z.string().min(1).max(500),
+        sceneDescription: z.string().min(1).max(1000),
         cameraMotion: z.enum(["zoom", "pan", "dolly", "slowMotion"]),
         motionIntensity: z.number().int().min(0).max(100),
         effects: z.array(z.string()).optional(),
