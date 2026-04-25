@@ -77,6 +77,13 @@ export default function Home() {
                   Gallery
                 </Button>
                 <Button
+                  onClick={() => setLocation("/profile")}
+                  variant="outline"
+                  className="border-slate-700"
+                >
+                  Profile
+                </Button>
+                <Button
                   onClick={logout}
                   variant="outline"
                   className="border-slate-700"

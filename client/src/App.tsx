@@ -9,6 +9,7 @@ import TextToImage from "./pages/TextToImage";
 import Gallery from "./pages/Gallery";
 import PromptBuilderPage from "./pages/PromptBuilderPage";
 import ImageToVideo from "./pages/ImageToVideo";
+import Profile from "./pages/Profile";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -19,6 +20,7 @@ function Router() {
       <Route path={"/gallery"} component={Gallery} />
       <Route path={"/prompt-builder"} component={PromptBuilderPage} />
       <Route path={"/image-to-video"} component={ImageToVideo} />
+      <Route path={"/profile"} component={Profile} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
