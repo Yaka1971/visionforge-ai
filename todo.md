@@ -12,8 +12,8 @@
 - [x] Implement LLM prompt enhancement service
 - [x] Implement Cinematic Mode prompt generation (LLM-powered)
 - [x] Implement smart prompt builder suggestions (LLM with category context)
-- [ ] Implement image-to-video generation service
-- [ ] Implement video enhancement service (effects, transitions)
+- [x] Implement image-to-video generation service
+- [x] Implement video enhancement service (effects, transitions)
 - [ ] Implement batch generation queue system
 - [x] Implement file storage integration for images and videos
 
@@ -92,7 +92,7 @@
 - [ ] Test gallery functionality end-to-end
 - [ ] Test Cinematic Mode generation
 - [ ] Test smart suggestions
-- [ ] Test image-to-video generation
+- [x] Test image-to-video generation
 - [ ] Test batch generation
 - [ ] Test gallery operations (view, download, delete)
 - [ ] Test export functionality

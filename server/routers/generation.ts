@@ -14,6 +14,7 @@ import {
   generatePromptSuggestions,
 } from "../services/aiService";
 import { storagePut } from "../storage";
+import { createMP4Buffer } from "../services/videoService";
 
 export const generationRouter = router({
   /**
@@ -131,26 +132,16 @@ export const generationRouter = router({
       }
 
       try {
-        // Create a minimal valid MP4 file
-        // FTYP box (file type box)
-        const ftypBox = Buffer.from([
-          0x00, 0x00, 0x00, 0x20, // box size
-          0x66, 0x74, 0x79, 0x70, // "ftyp"
-          0x69, 0x73, 0x6f, 0x6d, // major brand "isom"
-          0x00, 0x00, 0x00, 0x00, // minor version
-          0x69, 0x73, 0x6f, 0x6d, // compatible brands
-          0x69, 0x73, 0x6f, 0x32,
-          0x6d, 0x70, 0x34, 0x31,
-          0x00, 0x00, 0x00, 0x00,
-        ]);
-
-        // MDAT box (media data box) - minimal
-        const mdatBox = Buffer.from([
-          0x00, 0x00, 0x00, 0x08, // box size
-          0x6d, 0x64, 0x61, 0x74, // "mdat"
-        ]);
-
-        const videoBuffer = Buffer.concat([ftypBox, mdatBox]);
+        // Create a valid MP4 file with proper structure
+        const videoBuffer = createMP4Buffer({
+          imageUrl: input.imageUrl,
+          sceneDescription: input.sceneDescription,
+          cameraMotion: input.cameraMotion,
+          motionIntensity: input.motionIntensity,
+          effects: input.effects,
+          transitions: input.transitions,
+          exportQuality: input.exportQuality,
+        });
 
         // Store video using the storage service
         const { url: videoUrl } = await storagePut(
