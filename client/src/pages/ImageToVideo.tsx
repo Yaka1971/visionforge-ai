@@ -34,6 +34,8 @@ export default function ImageToVideo() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedVideo, setGeneratedVideo] = useState<string | null>(null);
 
+  const generateVideoMutation = trpc.generation.generateVideo.useMutation();
+
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -58,25 +60,21 @@ export default function ImageToVideo() {
 
     setIsGenerating(true);
     try {
-      // Create a comprehensive video prompt with all settings
-      const fullPrompt = `
-Video Scene: ${videoPrompt}
-Camera Motion: ${cameraMotion} (intensity: ${motionIntensity}%)
-Effects: ${selectedEffects.length > 0 ? selectedEffects.join(", ") : "none"}
-Transitions: ${selectedTransitions.length > 0 ? selectedTransitions.join(", ") : "none"}
-Duration: 15 seconds
-Quality: ${exportQuality}
-      `.trim();
+      // Call the backend video generation endpoint
+      const result = await generateVideoMutation.mutateAsync({
+        imageUrl: selectedImage,
+        sceneDescription: videoPrompt,
+        cameraMotion: cameraMotion as "zoom" | "pan" | "dolly" | "slowMotion",
+        motionIntensity,
+        effects: selectedEffects,
+        transitions: selectedTransitions,
+        exportQuality: exportQuality as "HD" | "4K",
+      });
 
-      // Simulate video generation (in production, this would call a real video API)
-      await new Promise((resolve) => setTimeout(resolve, 3000));
-
-      // For now, create a mock video URL
-      const mockVideoUrl = URL.createObjectURL(
-        new Blob(["mock video data"], { type: "video/mp4" })
-      );
-      setGeneratedVideo(mockVideoUrl);
-      toast.success("Video generated successfully!");
+      if (result.generation.videoUrl) {
+        setGeneratedVideo(result.generation.videoUrl);
+        toast.success("Video generated successfully!");
+      }
     } catch (error) {
       console.error("Video generation failed:", error);
       toast.error("Failed to generate video. Please try again.");
@@ -330,11 +328,12 @@ Quality: ${exportQuality}
                     </div>
                   </div>
                 ) : generatedVideo ? (
-                  <div className="w-full h-full flex flex-col items-center justify-center">
+                  <div className="w-full h-full flex flex-col items-center justify-center bg-black">
                     <video
                       src={generatedVideo}
                       controls
                       className="w-full h-full object-contain"
+                      autoPlay
                     />
                   </div>
                 ) : selectedImage ? (
