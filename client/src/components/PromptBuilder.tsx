@@ -133,12 +133,15 @@ export function PromptBuilder({
             onChange={(e) =>
               setBuilderPrompt({
                 ...builderPrompt,
-                [activeCategory]: e.target.value,
+                [activeCategory]: e.target.value.slice(0, 500),
               } as any)
             }
             placeholder={`Describe ${activeCategory}...`}
             className="bg-slate-800/50 border-slate-700 text-white placeholder-gray-500 h-20 resize-none"
           />
+          <p className="text-xs text-gray-500">
+            {((builderPrompt as any)[activeCategory] || "").length} / 500 characters
+          </p>
 
           {/* Suggestions */}
           {suggestionsQuery.data?.suggestions && (

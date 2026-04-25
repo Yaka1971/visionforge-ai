@@ -167,11 +167,11 @@ export default function ImageToVideo() {
                 <Textarea
                   placeholder="Describe what happens in the video. E.g., 'A camera slowly zooms through a mystical forest with glowing particles floating around, revealing ancient ruins in the distance'"
                   value={videoPrompt}
-                  onChange={(e) => setVideoPrompt(e.target.value)}
+                  onChange={(e) => setVideoPrompt(e.target.value.slice(0, 1000))}
                   className="bg-slate-800/50 border-slate-700 text-white placeholder-gray-500 min-h-24 resize-none"
                 />
                 <p className="text-xs text-gray-500 mt-1">
-                  {videoPrompt.length} / 500 characters
+                  {videoPrompt.length} / 1000 characters
                 </p>
               </div>
 
