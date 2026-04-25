@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
+import { trpc } from "@/lib/trpc";
+import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -12,6 +15,7 @@ import {
 import { Slider } from "@/components/ui/slider";
 import { Video, Upload, Download, ArrowLeft, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
 
 const CAMERA_MOTIONS = ["zoom", "pan", "dolly", "slowMotion"];
 const LIGHT_EFFECTS = ["beam bursts", "glow", "fire", "smoke"];
@@ -19,7 +23,9 @@ const TRANSITIONS = ["fade", "flash", "glitch", "cinematic cut"];
 
 export default function ImageToVideo() {
   const [, setLocation] = useLocation();
+  const { user } = useAuth();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [videoPrompt, setVideoPrompt] = useState("");
   const [cameraMotion, setCameraMotion] = useState("zoom");
   const [motionIntensity, setMotionIntensity] = useState(50);
   const [selectedEffects, setSelectedEffects] = useState<string[]>([]);
@@ -40,13 +46,40 @@ export default function ImageToVideo() {
   };
 
   const handleGenerateVideo = async () => {
-    if (!selectedImage) return;
+    if (!selectedImage || !videoPrompt.trim()) {
+      toast.error("Please upload an image and enter a video prompt");
+      return;
+    }
+
+    if (!user) {
+      toast.error("Please log in to generate videos");
+      return;
+    }
 
     setIsGenerating(true);
     try {
-      // Simulate video generation
+      // Create a comprehensive video prompt with all settings
+      const fullPrompt = `
+Video Scene: ${videoPrompt}
+Camera Motion: ${cameraMotion} (intensity: ${motionIntensity}%)
+Effects: ${selectedEffects.length > 0 ? selectedEffects.join(", ") : "none"}
+Transitions: ${selectedTransitions.length > 0 ? selectedTransitions.join(", ") : "none"}
+Duration: 15 seconds
+Quality: ${exportQuality}
+      `.trim();
+
+      // Simulate video generation (in production, this would call a real video API)
       await new Promise((resolve) => setTimeout(resolve, 3000));
-      setGeneratedVideo("https://example.com/generated-video.mp4");
+
+      // For now, create a mock video URL
+      const mockVideoUrl = URL.createObjectURL(
+        new Blob(["mock video data"], { type: "video/mp4" })
+      );
+      setGeneratedVideo(mockVideoUrl);
+      toast.success("Video generated successfully!");
+    } catch (error) {
+      console.error("Video generation failed:", error);
+      toast.error("Failed to generate video. Please try again.");
     } finally {
       setIsGenerating(false);
     }
@@ -81,7 +114,7 @@ export default function ImageToVideo() {
               Image to Video
             </h1>
             <p className="text-gray-400">
-              Transform static images into cinematic 15-second videos
+              Transform static images into cinematic 15-second videos with AI motion
             </p>
           </div>
           <Button
@@ -123,6 +156,25 @@ export default function ImageToVideo() {
                     </p>
                   </label>
                 </div>
+                {selectedImage && (
+                  <p className="text-xs text-green-400 mt-2">✓ Image uploaded</p>
+                )}
+              </div>
+
+              {/* Video Prompt */}
+              <div>
+                <label className="text-sm font-semibold text-gray-300 mb-2 block">
+                  Video Scene Description
+                </label>
+                <Textarea
+                  placeholder="Describe what happens in the video. E.g., 'A camera slowly zooms through a mystical forest with glowing particles floating around, revealing ancient ruins in the distance'"
+                  value={videoPrompt}
+                  onChange={(e) => setVideoPrompt(e.target.value)}
+                  className="bg-slate-800/50 border-slate-700 text-white placeholder-gray-500 min-h-24 resize-none"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  {videoPrompt.length} / 500 characters
+                </p>
               </div>
 
               {/* Camera Motion */}
@@ -186,7 +238,7 @@ export default function ImageToVideo() {
               {/* Transitions */}
               <div>
                 <label className="text-sm font-semibold text-gray-300 mb-2 block">
-                  Transitions
+                  Scene Transitions
                 </label>
                 <div className="space-y-2">
                   {TRANSITIONS.map((transition) => (
@@ -234,8 +286,8 @@ export default function ImageToVideo() {
               {/* Generate Button */}
               <Button
                 onClick={handleGenerateVideo}
-                disabled={!selectedImage || isGenerating}
-                className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold py-3 rounded-lg"
+                disabled={!selectedImage || !videoPrompt.trim() || isGenerating}
+                className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold py-3 rounded-lg disabled:opacity-50"
               >
                 {isGenerating ? (
                   <>
@@ -308,8 +360,9 @@ export default function ImageToVideo() {
                     onClick={() => {
                       const link = document.createElement("a");
                       link.href = generatedVideo;
-                      link.download = "visionforge-video.mp4";
+                      link.download = `visionforge-video-${Date.now()}.mp4`;
                       link.click();
+                      toast.success("Video download started!");
                     }}
                   >
                     <Download size={18} className="mr-2" />
